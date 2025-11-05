@@ -140,7 +140,7 @@ const AddArtist = ({ session }) => {
     }, [])
 
     return (
-        <div className='min-h-screen w-screen flex flex-col gap-5 items-center justify-center py-20 font-mono'>
+        <div className='md:min-h-screen min-h-dvh w-screen flex flex-col gap-5 items-center justify-center py-20 font-mono'>
             <div className="w-sm flex justify-between items-center">
                 <div>{editId ? "Edit Artist" : "Add Artist"}</div>
                 <button onClick={logout} className="cursor-pointer text-black underline text-sm">Logout</button>
