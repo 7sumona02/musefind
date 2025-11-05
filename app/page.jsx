@@ -50,7 +50,7 @@ const Page = () => {
         </InputGroup>
       </div>
 
-      <div className='space-y-10 mt-15'>
+      <div className='space-y-5 mt-15'>
         {filteredArtists.length > 0 ? (
           filteredArtists.map((artist, key) => (
             <div key={key} className='w-sm border-2 border-black p-1 flex flex-col space-y-3'>

@@ -1,8 +1,6 @@
 'use client'
 
-import {
-    Field,
-} from "@/components/ui/field"
+import { Field } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useEffect, useState } from "react"
@@ -23,17 +21,44 @@ const AddArtist = ({ session }) => {
         image: ''
     })
 
+    const [artists, setArtists] = useState([])
+    const [editId, setEditId] = useState(null) // track which artist is being edited
+
     const handleSubmit = async (e) => {
         e.preventDefault()
 
-        const { error, data } = await supabase.from('artists').insert({ ...artist, email: session.user.email })
-
-        if (error) {
-            toast.error(error.message)
+        if (!artist.name.trim()) {
+            toast.error("Name is required")
             return
         }
-        toast.success('Artist added successfully')
-        console.log(data)
+
+        if (editId) {
+            // update existing artist
+            const { error } = await supabase
+                .from('artists')
+                .update({
+                    ...artist
+                })
+                .eq('id', editId)
+
+            if (error) {
+                toast.error(error.message)
+                return
+            }
+            toast.success('Artist updated successfully')
+            setEditId(null)
+        } else {
+            // add new artist
+            const { error } = await supabase
+                .from('artists')
+                .insert({ ...artist, email: session.user.email })
+
+            if (error) {
+                toast.error(error.message)
+                return
+            }
+            toast.success('Artist added successfully')
+        }
 
         setArtist({
             name: '',
@@ -43,30 +68,40 @@ const AddArtist = ({ session }) => {
             location: '',
             image: ''
         })
+        fetchArtists()
     }
 
-const deleteArtist = async (id) => {
+    const deleteArtist = async (id) => {
         const { error } = await supabase.from('artists').delete().eq('id', id)
-
         if (error) {
             toast.error(error.message)
             return
         }
         toast.success('Artist deleted successfully')
+        fetchArtists()
+    }
+
+    const editArtist = (artist) => {
+        setArtist({
+            name: artist.name,
+            genre: artist.genre,
+            bio: artist.bio,
+            spotify: artist.spotify,
+            location: artist.location,
+            image: artist.image
+        })
+        setEditId(artist.id)
+        toast.info('Editing artist details')
     }
 
     const logout = async () => {
         const { error } = await supabase.auth.signOut()
-
         if (error) {
             toast.error("Unable to logout")
             return
         }
-
         toast.success("You are logged out")
     }
-
-    const [artists, setArtists] = useState([])
 
     const fetchArtists = async () => {
         const { error, data } = await supabase
@@ -93,19 +128,12 @@ const deleteArtist = async (id) => {
                 'postgres_changes',
                 { event: 'INSERT', schema: 'public', table: 'artists' },
                 (payload) => {
-                    const artists = payload.new
-                    setArtists((prev) => [...prev, artists])
+                    const newArtist = payload.new
+                    setArtists((prev) => [...prev, newArtist])
                 }
             )
+            .subscribe()
 
-        // subscribe returns a promise
-        channel.subscribe((status) => {
-            if (status === 'SUBSCRIBED') {
-                console.log('Subscribed!')
-            }
-        })
-
-        // cleanup on unmount
         return () => {
             supabase.removeChannel(channel)
         }
@@ -114,43 +142,46 @@ const deleteArtist = async (id) => {
     return (
         <div className='min-h-screen w-screen flex flex-col gap-5 items-center justify-center py-20 font-mono'>
             <div className="w-sm flex justify-between items-center">
-                <div>Add Artist</div>
+                <div>{editId ? "Edit Artist" : "Add Artist"}</div>
                 <button onClick={logout} className="cursor-pointer text-black underline text-sm">Logout</button>
             </div>
+
             <div>
                 <form onSubmit={handleSubmit} className="space-y-3 w-sm">
                     <Field>
-                        <Input type="text" placeholder="Name" onChange={(e) => setArtist({ ...artist, name: e.target.value })} />
+                        <Input type="text" placeholder="Name" value={artist.name} onChange={(e) => setArtist({ ...artist, name: e.target.value })} />
                     </Field>
                     <Field>
-                        <Input type="text" placeholder="Genre" onChange={(e) => setArtist({ ...artist, genre: e.target.value })} />
+                        <Input type="text" placeholder="Genre" value={artist.genre} onChange={(e) => setArtist({ ...artist, genre: e.target.value })} />
                     </Field>
                     <Field>
-                        <Textarea type="text" placeholder="Bio" onChange={(e) => setArtist({ ...artist, bio: e.target.value })} />
+                        <Textarea placeholder="Bio" value={artist.bio} onChange={(e) => setArtist({ ...artist, bio: e.target.value })} />
                     </Field>
                     <Field>
-                        <Input type="text" placeholder="Spotify Link" onChange={(e) => setArtist({ ...artist, spotify: e.target.value })} />
+                        <Input type="text" placeholder="Spotify Link" value={artist.spotify} onChange={(e) => setArtist({ ...artist, spotify: e.target.value })} />
                     </Field>
                     <Field>
-                        <Input type="text" placeholder="Location" onChange={(e) => setArtist({ ...artist, location: e.target.value })} />
+                        <Input type="text" placeholder="Location" value={artist.location} onChange={(e) => setArtist({ ...artist, location: e.target.value })} />
                     </Field>
                     <Field>
-                        <Input type="text" placeholder="Image Url" onChange={(e) => setArtist({ ...artist, image: e.target.value })} />
+                        <Input type="text" placeholder="Image URL" value={artist.image} onChange={(e) => setArtist({ ...artist, image: e.target.value })} />
                     </Field>
-                    <Button className="w-full cursor-pointer" type="submit">Add Artist</Button>
+                    <Button className="w-full cursor-pointer" type="submit">
+                        {editId ? "Update Artist" : "Add Artist"}
+                    </Button>
                 </form>
             </div>
 
             <div className="space-y-5 mt-5">
                 {artists.map((artist, key) => (
-                    <div>
-                        <div key={key} className='w-sm border-2 border-black p-1 flex flex-col space-y-3'>
+                    <div key={key}>
+                        <div className='w-sm border-2 border-black p-1 flex flex-col space-y-3 relative'>
                             <div className='w-full flex justify-between gap-3'>
                                 <div className='w-28 aspect-square overflow-hidden'>
                                     <img src={artist.image} className='w-full h-full object-cover' alt={artist.name} />
                                 </div>
                                 <div className='w-full flex flex-col justify-between'>
-                                    <div className='w-full flex justify-between items-start details'>
+                                    <div className='w-full flex justify-between items-start'>
                                         <div>
                                             <div className='font-bold text-lg'>{artist.name}</div>
                                             <div className='text-sm'>{artist.location}</div>
@@ -166,9 +197,15 @@ const deleteArtist = async (id) => {
                             </div>
                         </div>
                         <div className="flex items-center justify-center gap-3 mt-3">
-                            <div><EditIcon className="text-black size-5 cursor-pointer" /></div>
-                            <div onClick={() => deleteArtist(artist.id)}><Trash className="text-red-500 size-5 cursor-pointer" /></div>
-                        </div>
+                                <EditIcon
+                                    onClick={() => editArtist(artist)}
+                                    className="text-black size-5 cursor-pointer"
+                                />
+                                <Trash
+                                    onClick={() => deleteArtist(artist.id)}
+                                    className="text-red-500 size-5 cursor-pointer"
+                                />
+                            </div>
                     </div>
                 ))}
             </div>
