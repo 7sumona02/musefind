@@ -11,6 +11,7 @@ import { toast } from "sonner"
 import { Button } from '@/components/ui/button'
 import Link from "next/link"
 import { SpotifyLogoIcon } from "@phosphor-icons/react"
+import { EditIcon, Trash } from "lucide-react"
 
 const AddArtist = ({ session }) => {
     const [artist, setArtist] = useState({
@@ -33,9 +34,26 @@ const AddArtist = ({ session }) => {
         }
         toast.success('Artist added successfully')
         console.log(data)
+
+        setArtist({
+            name: '',
+            genre: '',
+            bio: '',
+            spotify: '',
+            location: '',
+            image: ''
+        })
     }
 
-    
+const deleteArtist = async (id) => {
+        const { error } = await supabase.from('artists').delete().eq('id', id)
+
+        if (error) {
+            toast.error(error.message)
+            return
+        }
+        toast.success('Artist deleted successfully')
+    }
 
     const logout = async () => {
         const { error } = await supabase.auth.signOut()
@@ -125,25 +143,31 @@ const AddArtist = ({ session }) => {
 
             <div className="space-y-5 mt-5">
                 {artists.map((artist, key) => (
-                    <div key={key} className='w-sm border-2 border-black p-1 flex flex-col space-y-3'>
-                        <div className='w-full flex justify-between gap-3'>
-                            <div className='w-28 aspect-square overflow-hidden'>
-                                <img src={artist.image} className='w-full h-full object-cover' alt={artist.name} />
-                            </div>
-                            <div className='w-full flex flex-col justify-between'>
-                                <div className='w-full flex justify-between items-start details'>
-                                    <div>
-                                        <div className='font-bold text-lg'>{artist.name}</div>
-                                        <div className='text-sm'>{artist.location}</div>
-                                    </div>
-                                    <div className='cursor-pointer'>
-                                        <Link href={artist.spotify} target='_blank'>
-                                            <SpotifyLogoIcon size={25} weight='fill' />
-                                        </Link>
-                                    </div>
+                    <div>
+                        <div key={key} className='w-sm border-2 border-black p-1 flex flex-col space-y-3'>
+                            <div className='w-full flex justify-between gap-3'>
+                                <div className='w-28 aspect-square overflow-hidden'>
+                                    <img src={artist.image} className='w-full h-full object-cover' alt={artist.name} />
                                 </div>
-                                <div className='text-sm text-neutral-500'>{artist.genre}</div>
+                                <div className='w-full flex flex-col justify-between'>
+                                    <div className='w-full flex justify-between items-start details'>
+                                        <div>
+                                            <div className='font-bold text-lg'>{artist.name}</div>
+                                            <div className='text-sm'>{artist.location}</div>
+                                        </div>
+                                        <div className='cursor-pointer'>
+                                            <Link href={artist.spotify} target='_blank'>
+                                                <SpotifyLogoIcon size={25} weight='fill' />
+                                            </Link>
+                                        </div>
+                                    </div>
+                                    <div className='text-sm text-neutral-500'>{artist.genre}</div>
+                                </div>
                             </div>
+                        </div>
+                        <div className="flex items-center justify-center gap-3 mt-3">
+                            <div><EditIcon className="text-black size-5 cursor-pointer" /></div>
+                            <div onClick={() => deleteArtist(artist.id)}><Trash className="text-red-500 size-5 cursor-pointer" /></div>
                         </div>
                     </div>
                 ))}
