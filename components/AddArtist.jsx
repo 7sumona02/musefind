@@ -172,7 +172,7 @@ const AddArtist = ({ session }) => {
                 </form>
             </div>
 
-            <div className="space-y-5 mt-5">
+            <div className="space-y-10 mt-5">
                 {artists.map((artist, key) => (
                     <div key={key}>
                         <div className='w-sm border-2 border-black p-1 flex flex-col space-y-3 relative'>
