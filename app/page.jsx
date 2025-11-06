@@ -108,7 +108,7 @@ const Page = () => {
       <div className='pt-5'>
         <InputGroup className='w-xs md:w-sm shadow-none'>
           <InputGroupInput
-            placeholder="Search your muse"
+            placeholder="Search artist, genre..."
             onChange={(e) => setSearch(e.target.value)}
           />
           <InputGroupAddon>
