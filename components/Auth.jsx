@@ -61,7 +61,7 @@ export const Auth = () => {
   }
 
   return (
-    <div className='md:min-h-screen min-h-dvh w-screen flex flex-col items-center justify-center font-mono text-neutral-900 py-10'>
+    <div className='md:min-h-screen min-h-dvh w-screen flex flex-col items-center justify-center font-mono text-neutral-900'>
     <div className="flex w-full max-w-sm flex-col gap-6">
       <form onSubmit={handleSubmit}>
         <Tabs defaultValue="login" onValueChange={setMode}>
