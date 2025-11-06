@@ -40,7 +40,6 @@ const Page = () => {
   useEffect(() => {
     if (user) {
       fetchArtists()
-      fetchFavorites()
     }
   }, [user])
 
