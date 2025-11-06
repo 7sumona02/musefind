@@ -106,7 +106,7 @@ const Page = () => {
       <div className='md:text-4xl text-3xl font-bold tracking-tight'>Find your muse</div>
 
       <div className='pt-5'>
-        <InputGroup className='w-sm shadow-none'>
+        <InputGroup className='w-xs md:w-sm shadow-none'>
           <InputGroupInput
             placeholder="Search your muse"
             onChange={(e) => setSearch(e.target.value)}

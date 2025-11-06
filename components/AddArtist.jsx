@@ -141,13 +141,13 @@ const AddArtist = ({ session }) => {
 
     return (
         <div className='md:min-h-screen min-h-dvh w-screen flex flex-col gap-5 items-center py-15 font-mono'>
-            <div className="w-sm flex justify-between items-center font-bold">
+            <div className="md:w-sm w-xs flex justify-between items-center font-bold">
                 <div>{editId ? "Edit Artist" : "Add Artist"}</div>
                 <button onClick={logout} className='cursor-pointer text-xs border border-neutral-900 rounded-full px-3 py-1 font-bold'>Logout</button>
             </div>
 
             <div>
-                <form onSubmit={handleSubmit} className="space-y-3 w-sm">
+                <form onSubmit={handleSubmit} className="space-y-3 md:w-sm w-xs">
                     <Field>
                         <Input type="text" placeholder="Name" value={artist.name} onChange={(e) => setArtist({ ...artist, name: e.target.value })} />
                     </Field>
@@ -172,10 +172,11 @@ const AddArtist = ({ session }) => {
                 </form>
             </div>
 
-            <div className="space-y-10 mt-5">
+            <div className="mt-5 font-bold w-xs flex justify-start">Your Card</div>
+            <div className="space-y-10">
                 {artists.map((artist, key) => (
                     <div key={key}>
-                        <div className='w-sm border border-neutral-200 p-1 flex flex-col space-y-3 bg-neutral-800'>
+                        <div className='md:w-sm w-xs border border-neutral-200 p-1 flex flex-col space-y-3 bg-neutral-800'>
                             <div className='w-full flex justify-between gap-2'>
                                 <div className='w-30 aspect-square overflow-hidden'>
                                     <img src={artist.image} className='w-full h-full object-cover' alt={artist.name} />

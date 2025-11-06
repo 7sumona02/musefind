@@ -29,7 +29,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-neutral-50`}
       >
-        <div className='w-sm mx-auto flex justify-between items-center font-mono pt-10'>
+        <div className='md:w-sm w-xs mx-auto flex justify-between items-center font-mono pt-10'>
               <Link href='/'><div className="font-bold">(FYM)</div></Link>
              <div className='flex gap-2.5'> 
                 <div><Link href='/dashboard'><button className='cursor-pointer text-xs border border-neutral-900 rounded-full px-3 py-1 font-bold'>Add artist</button></Link></div>

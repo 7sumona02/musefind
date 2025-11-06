@@ -3,7 +3,7 @@ import { HeartIcon, SpotifyLogoIcon } from '@phosphor-icons/react'
 import Link from 'next/link'
 
 export const ArtistCard = ({ artist, isFav, onFavToggle }) => (
-  <div className='w-sm border border-neutral-200 p-1 flex flex-col space-y-3 bg-neutral-800'>
+  <div className='md:w-sm w-xs border border-neutral-200 p-1 flex flex-col space-y-3 bg-neutral-800'>
     <div className='w-full flex justify-between gap-2'>
       <div className='w-30 aspect-square overflow-hidden'>
         <img src={artist.image} className='w-full h-full object-cover' alt={artist.name} />
