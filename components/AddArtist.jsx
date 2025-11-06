@@ -140,10 +140,10 @@ const AddArtist = ({ session }) => {
     }, [])
 
     return (
-        <div className='md:min-h-screen min-h-dvh w-screen flex flex-col gap-5 items-center justify-center py-20 font-mono'>
-            <div className="w-sm flex justify-between items-center">
+        <div className='md:min-h-screen min-h-dvh w-screen flex flex-col gap-5 items-center py-15 font-mono'>
+            <div className="w-sm flex justify-between items-center font-bold">
                 <div>{editId ? "Edit Artist" : "Add Artist"}</div>
-                <button onClick={logout} className="cursor-pointer text-black underline text-sm">Logout</button>
+                <button onClick={logout} className='cursor-pointer text-xs border border-neutral-900 rounded-full px-3 py-1 font-bold'>Logout</button>
             </div>
 
             <div>
@@ -175,37 +175,39 @@ const AddArtist = ({ session }) => {
             <div className="space-y-10 mt-5">
                 {artists.map((artist, key) => (
                     <div key={key}>
-                        <div className='w-sm border-2 border-black p-1 flex flex-col space-y-3 relative'>
-                            <div className='w-full flex justify-between gap-3'>
-                                <div className='w-28 aspect-square overflow-hidden'>
+                        <div className='w-sm border border-neutral-200 p-1 flex flex-col space-y-3 bg-neutral-800'>
+                            <div className='w-full flex justify-between gap-2'>
+                                <div className='w-30 aspect-square overflow-hidden'>
                                     <img src={artist.image} className='w-full h-full object-cover' alt={artist.name} />
                                 </div>
-                                <div className='w-full flex flex-col justify-between'>
-                                    <div className='w-full flex justify-between items-start'>
-                                        <div>
-                                            <div className='font-bold text-lg'>{artist.name}</div>
+                                <div className='w-full flex flex-col justify-between p-1'>
+                                    <div className='w-full flex justify-between items-start details'>
+                                        <div className='text-neutral-200'>
+                                            <div className='font-bold'>{artist.name}</div>
                                             <div className='text-sm'>{artist.location}</div>
                                         </div>
                                         <div className='cursor-pointer'>
                                             <Link href={artist.spotify} target='_blank'>
-                                                <SpotifyLogoIcon size={25} weight='fill' />
+                                                <SpotifyLogoIcon size={25} weight='fill' className='text-neutral-200' />
                                             </Link>
                                         </div>
                                     </div>
-                                    <div className='text-sm text-neutral-500'>{artist.genre}</div>
+                                    <div className='w-full flex justify-between items-center'>
+                                        <div className='text-xs text-neutral-300'>{artist.genre}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div className="flex items-center justify-center gap-3 mt-3">
-                                <EditIcon
-                                    onClick={() => editArtist(artist)}
-                                    className="text-black size-5 cursor-pointer"
-                                />
-                                <Trash
-                                    onClick={() => deleteArtist(artist.id)}
-                                    className="text-red-500 size-5 cursor-pointer"
-                                />
-                            </div>
+                            <EditIcon
+                                onClick={() => editArtist(artist)}
+                                className="text-black size-5 cursor-pointer"
+                            />
+                            <Trash
+                                onClick={() => deleteArtist(artist.id)}
+                                className="text-red-500 size-5 cursor-pointer"
+                            />
+                        </div>
                     </div>
                 ))}
             </div>

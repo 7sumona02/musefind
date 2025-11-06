@@ -82,11 +82,8 @@ const FavouritesPage = () => {
   }
 
   return (
-    <div className='min-h-screen flex flex-col items-center font-mono font-medium py-10'>
+    <div className='min-h-screen flex flex-col items-center font-mono font-medium pt-15 pb-10 text-neutral-900'>
       <div className='md:text-4xl text-3xl font-bold tracking-tight mb-5'>Your favourites.</div>
-      <Link href='/'>
-        <Button className='mb-5'>← Back to artists</Button>
-      </Link>
 
       {artists.length > 0 ? (
         <div className='space-y-5'>
