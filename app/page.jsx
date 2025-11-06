@@ -3,7 +3,6 @@
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group'
 import { supabase } from '@/lib/supabase-client'
 import { SearchIcon } from 'lucide-react'
-import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import {ArtistCard} from '@/components/ArtistCard'
@@ -11,7 +10,6 @@ import {ArtistCard} from '@/components/ArtistCard'
 const Page = () => {
   const [artists, setArtists] = useState([])
   const [search, setSearch] = useState('')
-  const [fav, setFav] = useState([]) // store list of artist IDs user has favorited
   const [user, setUser] = useState(null)
 
   // Fetch user session
@@ -70,8 +68,6 @@ const Page = () => {
             <ArtistCard
               key={artist.id}
               artist={artist}
-              isFav={fav.includes(artist.id)}
-              onFavToggle={handleFavToggle}
             />
           ))
         ) : (
