@@ -33,21 +33,6 @@ const Page = () => {
     setArtists(data)
   }
 
-  const fetchFavorites = async () => {
-    if (!user) return
-    const { data, error } = await supabase
-      .from('favorites')
-      .select('artist_id')
-      .eq('user_id', user.id)
-
-    if (error) {
-      toast.error(error.message)
-      return
-    }
-
-    setFav(data.map((f) => f.artist_id))
-  }
-
   useEffect(() => {
     fetchUser()
   }, [])
@@ -58,43 +43,6 @@ const Page = () => {
       fetchFavorites()
     }
   }, [user])
-
-  const handleFavToggle = async (artistId) => {
-    if (!user) {
-      toast.error('Please log in to save favorites')
-      return
-    }
-
-    const isFav = fav.includes(artistId)
-
-    if (isFav) {
-      // remove from favorites
-      const { error } = await supabase
-        .from('favorites')
-        .delete()
-        .eq('artist_id', artistId)
-        .eq('user_id', user.id)
-
-      if (error) {
-        toast.error(error.message)
-      } else {
-        setFav(fav.filter((id) => id !== artistId))
-        toast.success('Removed from favorites')
-      }
-    } else {
-      // add to favorites
-      const { error } = await supabase
-        .from('favorites')
-        .insert([{ artist_id: artistId, user_id: user.id }])
-
-      if (error) {
-        toast.error(error.message)
-      } else {
-        setFav([...fav, artistId])
-        toast.success('Added to favorites')
-      }
-    }
-  }
 
   const filteredArtists = artists.filter((artist) =>
     [artist.name, artist.genre, artist.location]
