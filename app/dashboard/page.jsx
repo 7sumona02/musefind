@@ -16,13 +16,13 @@ const page = () => {
   useEffect(() => {
     fetchSession()
 
-    const {data: {authListener}} = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-    })
+    // const {data: {authListener}} = supabase.auth.onAuthStateChange((_event, session) => {
+    //   setSession(session)
+    // })
 
-    return () => {
-      authListener.subscription.unsubscribe()
-    }
+    // return () => {
+    //   authListener.subscription.unsubscribe()
+    // }
   },[])
   return (
      <div>
