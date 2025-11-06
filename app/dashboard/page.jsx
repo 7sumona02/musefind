@@ -6,24 +6,25 @@ import { supabase } from '@/lib/supabase-client'
 import AddArtist from '@/components/AddArtist'
 
 const page = () => {
-     const [session, setSession] = useState(null)
+ const [session, setSession] = useState(null)
 
   const fetchSession = async () => {
-     const currentSession = await supabase.auth.getSession()
-     setSession(currentSession.data.session)
+    const { data } = await supabase.auth.getSession()
+    setSession(data.session)
   }
 
   useEffect(() => {
     fetchSession()
 
-    const {data: {authListener}} = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
     })
 
+    // ✅ Safely clean up even if undefined
     return () => {
-      authListener.subscription.unsubscribe()
+      authListener?.subscription?.unsubscribe?.()
     }
-  },[])
+  }, [])
   return (
      <div>
       {session ? 
