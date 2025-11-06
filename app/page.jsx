@@ -3,6 +3,7 @@
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group'
 import { supabase } from '@/lib/supabase-client'
 import { SearchIcon } from 'lucide-react'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import {ArtistCard} from '@/components/ArtistCard'
@@ -10,6 +11,7 @@ import {ArtistCard} from '@/components/ArtistCard'
 const Page = () => {
   const [artists, setArtists] = useState([])
   const [search, setSearch] = useState('')
+  const [fav, setFav] = useState([]) // store list of artist IDs user has favorited
   const [user, setUser] = useState(null)
 
   // Fetch user session
@@ -31,6 +33,21 @@ const Page = () => {
     setArtists(data)
   }
 
+  const fetchFavorites = async () => {
+    if (!user) return
+    const { data, error } = await supabase
+      .from('favorites')
+      .select('artist_id')
+      .eq('user_id', user.id)
+
+    if (error) {
+      toast.error(error.message)
+      return
+    }
+
+    setFav(data.map((f) => f.artist_id))
+  }
+
   useEffect(() => {
     fetchUser()
   }, [])
@@ -38,8 +55,46 @@ const Page = () => {
   useEffect(() => {
     if (user) {
       fetchArtists()
+      fetchFavorites()
     }
   }, [user])
+
+  const handleFavToggle = async (artistId) => {
+    if (!user) {
+      toast.error('Please log in to save favorites')
+      return
+    }
+
+    const isFav = fav.includes(artistId)
+
+    if (isFav) {
+      // remove from favorites
+      const { error } = await supabase
+        .from('favorites')
+        .delete()
+        .eq('artist_id', artistId)
+        .eq('user_id', user.id)
+
+      if (error) {
+        toast.error(error.message)
+      } else {
+        setFav(fav.filter((id) => id !== artistId))
+        toast.success('Removed from favorites')
+      }
+    } else {
+      // add to favorites
+      const { error } = await supabase
+        .from('favorites')
+        .insert([{ artist_id: artistId, user_id: user.id }])
+
+      if (error) {
+        toast.error(error.message)
+      } else {
+        setFav([...fav, artistId])
+        toast.success('Added to favorites')
+      }
+    }
+  }
 
   const filteredArtists = artists.filter((artist) =>
     [artist.name, artist.genre, artist.location]
@@ -68,6 +123,8 @@ const Page = () => {
             <ArtistCard
               key={artist.id}
               artist={artist}
+              isFav={fav.includes(artist.id)}
+              onFavToggle={handleFavToggle}
             />
           ))
         ) : (
